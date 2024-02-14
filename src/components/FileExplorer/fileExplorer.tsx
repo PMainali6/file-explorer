@@ -1,8 +1,10 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Folder, File } from "../../data/data";
 import folderClose from "../../assets/folderClosed.svg";
 import folderOpen from "../../assets/folderOpen.svg";
+import fileIcon from "../../assets/file.svg";
 import "./fileExplorer.css";
+import ContextMenu from "../ContextMenu/ContextMenu";
 
 interface IFileExplorer {
   files: Folder | File;
@@ -14,33 +16,41 @@ const FileExplorer = ({ files, search }: IFileExplorer) => {
   const [rightClicked, setRightClicked] = useState(false);
   const [active, setActive] = useState(false);
 
-  const handleClick = (
-    e: React.MouseEvent<HTMLUListElement>,
-    filename: string
-  ) => {
-    console.log("Event: ", e.target);
-    console.log("Filename: ", filename);
-    setRightClicked(false);
-  };
+  const handleContextClick = useCallback(
+    (e: React.MouseEvent<HTMLLIElement>) => {
+      console.log("Event: ", e.currentTarget.id);
+      console.log("Filename: ", e.currentTarget.dataset.filename);
+      setRightClicked(false);
+    },
+    []
+  );
 
   useEffect(() => {
-    if (search.length > 3) {
+    if (search.length === 0) {
+      setExpand(false);
+      setActive(false);
+    }
+    if (search.length > 1) {
       const active = files.name.includes(search);
       setActive(active);
       setExpand(true);
     }
   }, [search]);
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    const key = e.key;
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLDivElement>) => {
+      const key = e.key;
 
-    if (key === "Enter") {
-    } else if (key === "ArrowDown") {
-      console.log("ArrowDonw: ", e.key);
-    } else if (key === "ArrowUp") {
-      console.log("Arrow up: ", key);
-    }
-  };
+      if (key === "Enter") {
+        setExpand((prev) => !prev);
+      } else if (key === "ArrowDown") {
+        console.log("ArrowDonw: ", e.key);
+      } else if (key === "ArrowUp") {
+        console.log("Arrow up: ", key);
+      }
+    },
+    []
+  );
 
   if (files.type === "folder") {
     return (
@@ -52,7 +62,7 @@ const FileExplorer = ({ files, search }: IFileExplorer) => {
           onClick={() => setExpand(!expand)}
         >
           <img
-            className="folder-img"
+            className="icon"
             src={expand ? folderOpen : folderClose}
             alt="folder icon"
           />
@@ -75,7 +85,7 @@ const FileExplorer = ({ files, search }: IFileExplorer) => {
     return (
       <div
         tabIndex={0}
-        className={active ? "active" : ""}
+        className={active ? "file active" : "file"}
         onContextMenu={(e) => {
           e.preventDefault();
           setRightClicked(true);
@@ -83,14 +93,14 @@ const FileExplorer = ({ files, search }: IFileExplorer) => {
           console.log("Right Click: ", e);
         }}
       >
+        <img className="icon" src={fileIcon} alt="file icon" />
         {files.name}
         {rightClicked && (
           <div className="context-menu">
-            <ul onClick={(e) => handleClick(e, files.name)}>
-              <li id="edit">Edit</li>
-              <li id="copy">Copy</li>
-              <li id="delete">Delete</li>
-            </ul>
+            <ContextMenu
+              handleContextClick={handleContextClick}
+              filename={files.name}
+            />
           </div>
         )}
       </div>

@@ -81,3 +81,9 @@ export const files: Folder = {
     },
   ],
 };
+
+export const ContextData = [
+  { id: 1, label: "Edit" },
+  { id: 2, label: "Copy" },
+  { id: 3, label: "Delete" },
+];

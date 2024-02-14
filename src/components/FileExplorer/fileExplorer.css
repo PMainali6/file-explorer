@@ -1,8 +1,16 @@
-.folder {
+.folder,
+.file {
+  padding: 0 0.4rem;
   cursor: pointer;
 }
 
-.folder-img {
+.folder:hover,
+.file:hover {
+  background-color: #cdcdcd;
+  width: fit-content;
+}
+
+.icon {
   padding-right: 0.5rem;
 }
 
@@ -11,6 +19,7 @@
 }
 
 .context-menu {
+  font-size: 0.8rem;
   position: absolute;
   width: 200px;
   background-color: #383838;
@@ -20,13 +29,13 @@
 
 .context-menu ul {
   box-sizing: border-box;
-  padding: 1rem;
+  padding: 0.25rem;
   margin: 0;
   list-style: none;
   color: white;
 }
 .context-menu ul li {
-  padding: 18px 12px;
+  padding: 8px 16px;
 }
 /* hover */
 .context-menu ul li:hover {
